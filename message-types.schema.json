@@ -1,0 +1,167 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://docs.ag-ui.com/schemas/message-types.schema.json",
+  "title": "AG-UI Message Types",
+  "description": "Message type definitions for the Agent User Interaction Protocol",
+  "type": "object",
+  "definitions": {
+    "BaseMessage": {
+      "type": "object",
+      "description": "Base properties shared by all message types",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the message"
+        },
+        "role": {
+          "$ref": "enums.schema.json#/definitions/Role",
+          "description": "Role of the message sender"
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name of the sender"
+        }
+      },
+      "required": ["id", "role"]
+    },
+    "DeveloperMessage": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseMessage"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "role": {
+              "const": "developer"
+            },
+            "content": {
+              "type": "string",
+              "description": "Text content of the message"
+            }
+          },
+          "required": ["content"]
+        }
+      ],
+      "description": "Message from a developer"
+    },
+    "SystemMessage": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseMessage"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "role": {
+              "const": "system"
+            },
+            "content": {
+              "type": "string",
+              "description": "Text content of the message"
+            }
+          },
+          "required": ["content"]
+        }
+      ],
+      "description": "System message"
+    },
+    "AssistantMessage": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseMessage"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "role": {
+              "const": "assistant"
+            },
+            "content": {
+              "type": "string",
+              "description": "Text content of the message"
+            },
+            "toolCalls": {
+              "type": "array",
+              "items": {
+                "$ref": "core-types.schema.json#/definitions/ToolCall"
+              },
+              "description": "Tool calls made in this message"
+            }
+          }
+        }
+      ],
+      "description": "Message from an assistant"
+    },
+    "UserMessage": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseMessage"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "role": {
+              "const": "user"
+            },
+            "content": {
+              "type": "string",
+              "description": "Text content of the message"
+            }
+          },
+          "required": ["content"]
+        }
+      ],
+      "description": "Message from a user"
+    },
+    "ToolMessage": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseMessage"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "role": {
+              "const": "tool"
+            },
+            "content": {
+              "type": "string",
+              "description": "Text content of the message"
+            },
+            "toolCallId": {
+              "type": "string",
+              "description": "ID of the tool call this message responds to"
+            },
+            "error": {
+              "type": "string",
+              "description": "Error message if the tool call failed"
+            }
+          },
+          "required": ["content", "toolCallId"]
+        }
+      ],
+      "description": "Message from a tool"
+    },
+    "Message": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/DeveloperMessage"
+        },
+        {
+          "$ref": "#/definitions/SystemMessage"
+        },
+        {
+          "$ref": "#/definitions/AssistantMessage"
+        },
+        {
+          "$ref": "#/definitions/UserMessage"
+        },
+        {
+          "$ref": "#/definitions/ToolMessage"
+        }
+      ],
+      "description": "Union type representing any type of message in the system"
+    }
+  }
+}

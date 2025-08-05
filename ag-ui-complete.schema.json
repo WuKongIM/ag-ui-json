@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://docs.ag-ui.com/schemas/ag-ui-complete.schema.json",
+  "title": "AG-UI Complete Schema",
+  "description": "Comprehensive schema for the Agent User Interaction Protocol including all types, events, and messages",
+  "type": "object",
+  "definitions": {
+    "Enums": {
+      "$ref": "enums.schema.json#/definitions"
+    },
+    "CoreTypes": {
+      "$ref": "core-types.schema.json#/definitions"
+    },
+    "MessageTypes": {
+      "$ref": "message-types.schema.json#/definitions"
+    },
+    "EventTypes": {
+      "$ref": "event-types.schema.json#/definitions"
+    }
+  },
+  "properties": {
+    "runAgentInput": {
+      "$ref": "core-types.schema.json#/definitions/RunAgentInput",
+      "description": "Input parameters for running an agent"
+    },
+    "event": {
+      "$ref": "event-types.schema.json#/definitions/Event",
+      "description": "Any event in the AG-UI protocol"
+    },
+    "message": {
+      "$ref": "message-types.schema.json#/definitions/Message",
+      "description": "Any message type in the system"
+    },
+    "context": {
+      "$ref": "core-types.schema.json#/definitions/Context",
+      "description": "Contextual information for agents"
+    },
+    "tool": {
+      "$ref": "core-types.schema.json#/definitions/Tool",
+      "description": "Tool definition for agent use"
+    },
+    "toolCall": {
+      "$ref": "core-types.schema.json#/definitions/ToolCall",
+      "description": "Tool call made by an agent"
+    },
+    "state": {
+      "$ref": "core-types.schema.json#/definitions/State",
+      "description": "Agent state data"
+    }
+  },
+  "additionalProperties": false
+}

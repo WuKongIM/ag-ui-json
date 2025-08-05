@@ -1,0 +1,496 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://docs.ag-ui.com/schemas/event-types.schema.json",
+  "title": "AG-UI Event Types",
+  "description": "Event type definitions for the Agent User Interaction Protocol",
+  "type": "object",
+  "definitions": {
+    "BaseEvent": {
+      "type": "object",
+      "description": "Base properties shared by all event types",
+      "properties": {
+        "type": {
+          "$ref": "enums.schema.json#/definitions/EventType",
+          "description": "The type of event"
+        },
+        "timestamp": {
+          "type": "integer",
+          "description": "Timestamp when the event was created"
+        },
+        "rawEvent": {
+          "description": "Original event data if this event was transformed"
+        }
+      },
+      "required": ["type"]
+    },
+    "RunStartedEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "RUN_STARTED"
+            },
+            "threadId": {
+              "type": "string",
+              "description": "ID of the conversation thread"
+            },
+            "runId": {
+              "type": "string",
+              "description": "ID of the agent run"
+            }
+          },
+          "required": ["threadId", "runId"]
+        }
+      ],
+      "description": "Signals the start of an agent run"
+    },
+    "RunFinishedEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "RUN_FINISHED"
+            },
+            "threadId": {
+              "type": "string",
+              "description": "ID of the conversation thread"
+            },
+            "runId": {
+              "type": "string",
+              "description": "ID of the agent run"
+            },
+            "result": {
+              "description": "Result data from the agent run"
+            }
+          },
+          "required": ["threadId", "runId"]
+        }
+      ],
+      "description": "Signals the successful completion of an agent run"
+    },
+    "RunErrorEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "RUN_ERROR"
+            },
+            "message": {
+              "type": "string",
+              "description": "Error message"
+            },
+            "code": {
+              "type": "string",
+              "description": "Error code"
+            }
+          },
+          "required": ["message"]
+        }
+      ],
+      "description": "Signals an error during an agent run"
+    },
+    "StepStartedEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "STEP_STARTED"
+            },
+            "stepName": {
+              "type": "string",
+              "description": "Name of the step"
+            }
+          },
+          "required": ["stepName"]
+        }
+      ],
+      "description": "Signals the start of a step within an agent run"
+    },
+    "StepFinishedEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "STEP_FINISHED"
+            },
+            "stepName": {
+              "type": "string",
+              "description": "Name of the step"
+            }
+          },
+          "required": ["stepName"]
+        }
+      ],
+      "description": "Signals the completion of a step within an agent run"
+    },
+    "TextMessageStartEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "TEXT_MESSAGE_START"
+            },
+            "messageId": {
+              "type": "string",
+              "description": "Unique identifier for the message"
+            },
+            "role": {
+              "const": "assistant",
+              "description": "Role is always assistant for text messages"
+            }
+          },
+          "required": ["messageId", "role"]
+        }
+      ],
+      "description": "Signals the start of a text message"
+    },
+    "TextMessageContentEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "TEXT_MESSAGE_CONTENT"
+            },
+            "messageId": {
+              "type": "string",
+              "description": "Matches the ID from TextMessageStartEvent"
+            },
+            "delta": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Text content chunk (non-empty)"
+            }
+          },
+          "required": ["messageId", "delta"]
+        }
+      ],
+      "description": "Represents a chunk of content in a streaming text message"
+    },
+    "TextMessageEndEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "TEXT_MESSAGE_END"
+            },
+            "messageId": {
+              "type": "string",
+              "description": "Matches the ID from TextMessageStartEvent"
+            }
+          },
+          "required": ["messageId"]
+        }
+      ],
+      "description": "Signals the end of a text message"
+    },
+    "ToolCallStartEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "TOOL_CALL_START"
+            },
+            "toolCallId": {
+              "type": "string",
+              "description": "Unique identifier for the tool call"
+            },
+            "toolCallName": {
+              "type": "string",
+              "description": "Name of the tool being called"
+            },
+            "parentMessageId": {
+              "type": "string",
+              "description": "ID of the parent message"
+            }
+          },
+          "required": ["toolCallId", "toolCallName"]
+        }
+      ],
+      "description": "Signals the start of a tool call"
+    },
+    "ToolCallArgsEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "TOOL_CALL_ARGS"
+            },
+            "toolCallId": {
+              "type": "string",
+              "description": "Matches the ID from ToolCallStartEvent"
+            },
+            "delta": {
+              "type": "string",
+              "description": "Argument data chunk"
+            }
+          },
+          "required": ["toolCallId", "delta"]
+        }
+      ],
+      "description": "Represents a chunk of argument data for a tool call"
+    },
+    "ToolCallEndEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "TOOL_CALL_END"
+            },
+            "toolCallId": {
+              "type": "string",
+              "description": "Matches the ID from ToolCallStartEvent"
+            }
+          },
+          "required": ["toolCallId"]
+        }
+      ],
+      "description": "Signals the end of a tool call"
+    },
+    "ToolCallResultEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "TOOL_CALL_RESULT"
+            },
+            "messageId": {
+              "type": "string",
+              "description": "ID of the conversation message this result belongs to"
+            },
+            "toolCallId": {
+              "type": "string",
+              "description": "Matches the ID from the corresponding ToolCallStartEvent"
+            },
+            "content": {
+              "type": "string",
+              "description": "The actual result/output content from the tool execution"
+            },
+            "role": {
+              "const": "tool",
+              "description": "Role identifier, typically 'tool' for tool results"
+            }
+          },
+          "required": ["messageId", "toolCallId", "content"]
+        }
+      ],
+      "description": "Provides the result of a tool call execution"
+    },
+    "StateSnapshotEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "STATE_SNAPSHOT"
+            },
+            "snapshot": {
+              "description": "Complete state snapshot"
+            }
+          },
+          "required": ["snapshot"]
+        }
+      ],
+      "description": "Provides a complete snapshot of an agent's state"
+    },
+    "StateDeltaEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "STATE_DELTA"
+            },
+            "delta": {
+              "type": "array",
+              "description": "Array of JSON Patch operations (RFC 6902)"
+            }
+          },
+          "required": ["delta"]
+        }
+      ],
+      "description": "Provides a partial update to an agent's state using JSON Patch"
+    },
+    "MessagesSnapshotEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "MESSAGES_SNAPSHOT"
+            },
+            "messages": {
+              "type": "array",
+              "items": {
+                "$ref": "message-types.schema.json#/definitions/Message"
+              },
+              "description": "Array of message objects"
+            }
+          },
+          "required": ["messages"]
+        }
+      ],
+      "description": "Provides a snapshot of all messages in a conversation"
+    },
+    "RawEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "RAW"
+            },
+            "event": {
+              "description": "Original event data"
+            },
+            "source": {
+              "type": "string",
+              "description": "Source of the event"
+            }
+          },
+          "required": ["event"]
+        }
+      ],
+      "description": "Used to pass through events from external systems"
+    },
+    "CustomEvent": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "CUSTOM"
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the custom event"
+            },
+            "value": {
+              "description": "Value associated with the event"
+            }
+          },
+          "required": ["name", "value"]
+        }
+      ],
+      "description": "Used for application-specific custom events"
+    },
+    "Event": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/RunStartedEvent"
+        },
+        {
+          "$ref": "#/definitions/RunFinishedEvent"
+        },
+        {
+          "$ref": "#/definitions/RunErrorEvent"
+        },
+        {
+          "$ref": "#/definitions/StepStartedEvent"
+        },
+        {
+          "$ref": "#/definitions/StepFinishedEvent"
+        },
+        {
+          "$ref": "#/definitions/TextMessageStartEvent"
+        },
+        {
+          "$ref": "#/definitions/TextMessageContentEvent"
+        },
+        {
+          "$ref": "#/definitions/TextMessageEndEvent"
+        },
+        {
+          "$ref": "#/definitions/ToolCallStartEvent"
+        },
+        {
+          "$ref": "#/definitions/ToolCallArgsEvent"
+        },
+        {
+          "$ref": "#/definitions/ToolCallEndEvent"
+        },
+        {
+          "$ref": "#/definitions/ToolCallResultEvent"
+        },
+        {
+          "$ref": "#/definitions/StateSnapshotEvent"
+        },
+        {
+          "$ref": "#/definitions/StateDeltaEvent"
+        },
+        {
+          "$ref": "#/definitions/MessagesSnapshotEvent"
+        },
+        {
+          "$ref": "#/definitions/RawEvent"
+        },
+        {
+          "$ref": "#/definitions/CustomEvent"
+        }
+      ],
+      "description": "Union type representing any event in the system"
+    }
+  }
+}

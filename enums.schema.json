@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://docs.ag-ui.com/schemas/enums.schema.json",
+  "title": "AG-UI Enums",
+  "description": "Enumerated values used throughout the Agent User Interaction Protocol",
+  "type": "object",
+  "definitions": {
+    "EventType": {
+      "type": "string",
+      "enum": [
+        "TEXT_MESSAGE_START",
+        "TEXT_MESSAGE_CONTENT",
+        "TEXT_MESSAGE_END",
+        "TOOL_CALL_START",
+        "TOOL_CALL_ARGS",
+        "TOOL_CALL_END",
+        "TOOL_CALL_RESULT",
+        "STATE_SNAPSHOT",
+        "STATE_DELTA",
+        "MESSAGES_SNAPSHOT",
+        "RAW",
+        "CUSTOM",
+        "RUN_STARTED",
+        "RUN_FINISHED",
+        "RUN_ERROR",
+        "STEP_STARTED",
+        "STEP_FINISHED"
+      ],
+      "description": "All possible event types in the AG-UI protocol"
+    },
+    "Role": {
+      "type": "string",
+      "enum": [
+        "developer",
+        "system",
+        "assistant",
+        "user",
+        "tool"
+      ],
+      "description": "Possible roles for message senders in conversations"
+    },
+    "ToolCallType": {
+      "type": "string",
+      "enum": [
+        "function"
+      ],
+      "description": "Type of tool call, currently only function calls are supported"
+    }
+  }
+}

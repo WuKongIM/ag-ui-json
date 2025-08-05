@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://docs.ag-ui.com/schemas/core-types.schema.json",
+  "title": "AG-UI Core Types",
+  "description": "Core data structures used in the Agent User Interaction Protocol",
+  "type": "object",
+  "definitions": {
+    "RunAgentInput": {
+      "type": "object",
+      "description": "Input parameters for running an agent",
+      "properties": {
+        "threadId": {
+          "type": "string",
+          "description": "ID of the conversation thread"
+        },
+        "runId": {
+          "type": "string",
+          "description": "ID of the current run"
+        },
+        "state": {
+          "description": "Current state of the agent"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "message-types.schema.json#/definitions/Message"
+          },
+          "description": "List of messages in the conversation"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tool"
+          },
+          "description": "List of tools available to the agent"
+        },
+        "context": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Context"
+          },
+          "description": "List of context objects provided to the agent"
+        },
+        "forwardedProps": {
+          "description": "Additional properties forwarded to the agent"
+        }
+      },
+      "required": ["threadId", "runId", "state", "messages", "tools", "context", "forwardedProps"]
+    },
+    "Context": {
+      "type": "object",
+      "description": "Contextual information provided to an agent",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Description of what this context represents"
+        },
+        "value": {
+          "type": "string",
+          "description": "The actual context value"
+        }
+      },
+      "required": ["description", "value"]
+    },
+    "Tool": {
+      "type": "object",
+      "description": "Defines a tool that can be called by an agent",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the tool"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of what the tool does"
+        },
+        "parameters": {
+          "description": "JSON Schema defining the parameters for the tool"
+        }
+      },
+      "required": ["name", "description", "parameters"]
+    },
+    "ToolCall": {
+      "type": "object",
+      "description": "Represents a tool call made by an agent",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the tool call"
+        },
+        "type": {
+          "$ref": "enums.schema.json#/definitions/ToolCallType",
+          "description": "Type of the tool call"
+        },
+        "function": {
+          "$ref": "#/definitions/FunctionCall",
+          "description": "Details about the function being called"
+        }
+      },
+      "required": ["id", "type", "function"]
+    },
+    "FunctionCall": {
+      "type": "object",
+      "description": "Function name and arguments in a tool call",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the function to call"
+        },
+        "arguments": {
+          "type": "string",
+          "description": "JSON-encoded string of arguments to the function"
+        }
+      },
+      "required": ["name", "arguments"]
+    },
+    "State": {
+      "description": "Represents the state of an agent during execution. Can be any data structure."
+    }
+  }
+}
